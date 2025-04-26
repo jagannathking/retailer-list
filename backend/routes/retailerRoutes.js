@@ -10,21 +10,21 @@ const router = express.Router();
 router.get(
     '/', // Path
     validateRequest({ query: listRetailersSchema }), // Middleware for query validation
-    retailerController.listRetailers // Handler
+    retailerController.listRetailers
 );
 
 router.post(
     '/', // Path
     authMiddleware, // Middleware for authentication
     validateRequest({ body: createRetailerSchema }), // Middleware for body validation
-    retailerController.createRetailer // Handler
+    retailerController.createRetailer 
 );
 
 // Define route for '/:id' path
 router.get(
-    '/:id', // Path
+    '/:id', 
     validateRequest({ params: getRetailerSchema }), // Middleware for param validation
-    retailerController.getRetailer // Handler
+    retailerController.getRetailer
 );
 
 // Define route for '/:id/whatsapp' path
