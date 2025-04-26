@@ -2,116 +2,105 @@
 
 A simple Node.js/Express API to manage and list retailers near a location. Features include searching, filtering by category, and sorting by distance.
 
-## Prerequisites
+## Live Demo
 
-Before you begin, ensure you have the following installed:
+🚀 **Check out the live deployed version here:**
+[**https://retailer-list-sage.vercel.app/**](https://retailer-list-sage.vercel.app/)
 
-*   **Node.js:** Version 14 or later recommended. You can download it from [nodejs.org](https://nodejs.org/).
+*Note: The live demo database might be reset periodically.*
+
+---
+
+## Prerequisites (For Local Setup)
+
+If you want to run this project locally, ensure you have the following installed:
+
+*   **Node.js:** Version 14 or later recommended. Download from [nodejs.org](https://nodejs.org/).
 *   **npm:** Comes bundled with Node.js.
-*   **MongoDB:** A running MongoDB instance (either locally or a cloud service like MongoDB Atlas). You'll need the connection string.
+*   **MongoDB:** A running MongoDB instance (locally or cloud service like MongoDB Atlas).
 
-## Installation
+## Installation (For Local Setup)
 
 1.  **Clone the Repository (or Download Files):**
-    If you have this project in a Git repository:
     ```bash
     git clone <your-repository-url>
     cd retailer-api # Or your project's folder name
     ```
-    If you just have the code files, navigate to the project's root directory in your terminal.
+    Or navigate to the project's root directory if you downloaded the files.
 
 2.  **Install Dependencies:**
-    Run this command in the project's root directory:
     ```bash
     npm install
     ```
-    This will download all the necessary packages listed in `package.json`.
 
-## Configuration
+## Configuration (For Local Setup)
 
 1.  **Create `.env` File:**
-    In the root directory of the project, create a file named `.env`.
+    In the project's root directory, create a file named `.env`.
 
 2.  **Add Environment Variables:**
-    Copy the following variables into your `.env` file and replace the placeholder values with your actual configuration:
+    Copy these variables into `.env` and update with your local configuration:
 
     ```dotenv
-    # Server Port
+    # Server Port for local machine
     PORT=5000
 
-    # MongoDB Connection String
-    MONGO_URI=mongodb://localhost:27017/retailer_db # Replace with your MongoDB connection string
+    # Your local or cloud MongoDB Connection String
+    MONGO_URI=mongodb://localhost:27017/retailer_db
 
-    # JSON Web Token Secret (for securing POST requests)
-    JWT_SECRET=your_very_strong_and_secret_key_change_this # Replace with a long, random, secret string
+    # Secret for signing JWTs (for POST route protection)
+    JWT_SECRET=a_different_local_secret_key # Use a different secret for local dev
 
-    # Default number of items per page for listing retailers
+    # Default items per page
     DEFAULT_PAGE_SIZE=20
     ```
+    *   **Important:** Use a *different* `JWT_SECRET` locally than what might be used in production/deployment.
 
-    *   Replace `mongodb://localhost:27017/retailer_db` with your actual MongoDB connection details.
-    *   Replace `your_very_strong_and_secret_key_change_this` with a secure, random string for JWT signing.
+## Running the API Locally
 
-## Running the API
-
-1.  **Development Mode (Recommended for testing):**
-    This command uses `nodemon` (if installed as a dev dependency) to automatically restart the server when you make code changes.
+1.  **Development Mode:**
+    Uses `nodemon` for auto-restarting on changes.
     ```bash
     npm run dev
     ```
 
-2.  **Production Mode:**
-    This command simply runs the server using `node`.
+2.  **Production Mode (Local):**
+    Runs the server directly with `node`.
     ```bash
     npm start
     ```
 
-The API server should now be running. By default (using the example `.env`), it will be accessible at `http://localhost:5000`. You'll see a message like "Server is running on PORT 5000" in your terminal.
+If running locally, the API will typically be available at `http://localhost:5000` (or the port you set in `.env`).
 
 ## API Endpoints
 
-Here are the main API endpoints provided:
+You can test the following endpoints against your local setup or the **live deployment** at `https://retailer-list-sage.vercel.app/`.
 
 *   **`GET /`**
-    *   A simple health check endpoint.
+    *   Health check endpoint.
+    *   Live Link: [`https://retailer-list-sage.vercel.app/`](https://retailer-list-sage.vercel.app/)
     *   Response: `{ "success": true, "message": "Server is Healthy" }`
 
 *   **`GET /retailers`**
     *   Lists retailers with filtering, searching, pagination, and distance sorting.
-    *   **Query Parameters:**
-        *   `search` (string, optional): Search retailer names (case-insensitive).
-        *   `category` (string, optional): Filter by category (e.g., `GROCERY`, `MEDICINE`). Can be comma-separated for multiple categories (e.g., `GROCERY,MEDICINE`).
-        *   `lat` (number, optional): Customer's latitude. Required if `lng` is provided. Enables distance sorting/filtering.
-        *   `lng` (number, optional): Customer's longitude. Required if `lat` is provided. Enables distance sorting/filtering.
-        *   `radiusKm` (number, optional): Maximum distance in kilometers from `lat`, `lng`. Requires `lat` and `lng`.
-        *   `page` (number, optional, default: 1): Page number for pagination.
-        *   `limit` (number, optional, default: 20): Number of results per page.
-    *   **Response:** Includes `pagination` info (`total`, `page`, `pages`) and an array of `retailers` in `data`. If `lat`/`lng` are provided, retailers are sorted by distance and include a `distanceKm` field.
+    *   Live Link Example: [`https://retailer-list-sage.vercel.app/retailers?category=GROCERY&limit=5`](https://retailer-list-sage.vercel.app/retailers?category=GROCERY&limit=5)
+    *   **Query Parameters:** `search`, `category` (comma-separated ok), `lat`, `lng`, `radiusKm`, `page`, `limit`.
+    *   **Response:** Includes `pagination` info and an array of `retailers` in `data`. If `lat`/`lng` are provided, results are sorted by distance and include `distanceKm`.
 
 *   **`GET /retailers/:id`**
     *   Gets details for a single retailer by its UUID.
-    *   Replace `:id` with the actual retailer ID.
+    *   Live Link Example (Replace `:id` with a valid ID): [`https://retailer-list-sage.vercel.app/retailers/your_retailer_id`](https://retailer-list-sage.vercel.app/retailers/your_retailer_id)
     *   **Response:** Retailer object in `data`.
 
 *   **`GET /retailers/:id/whatsapp`**
-    *   Generates a WhatsApp "click to chat" link for the retailer's phone number.
-    *   Replace `:id` with the actual retailer ID.
+    *   Generates a WhatsApp "click to chat" link.
+    *   Live Link Example (Replace `:id`): [`https://retailer-list-sage.vercel.app/retailers/your_retailer_id/whatsapp`](https://retailer-list-sage.vercel.app/retailers/your_retailer_id/whatsapp)
     *   **Response:** `{ "link": "https://wa.me/..." }`
 
 *   **`POST /retailers`** (Protected)
     *   Creates a new retailer.
-    *   **Requires Authentication:** You must include a valid JWT in the `Authorization: Bearer <token>` header.
-    *   **Request Body (JSON):**
-        ```json
-        {
-          "name": "Example Mart",
-          "category": "GROCERY",
-          "phoneNumber": "+15551234567",
-          "address": "123 Main St, Anytown",
-          "latitude": 40.7128,
-          "longitude": -74.0060
-        }
-        ```
+    *   **Requires Authentication:** Needs a valid JWT in the `Authorization: Bearer <token>` header. *Authentication might be complex to test against the public demo unless a login/token generation endpoint is provided.*
+    *   **Request Body (JSON):** See previous README example.
     *   **Response:** The newly created retailer object in `data`.
 
 ## Technologies Used
@@ -119,8 +108,12 @@ Here are the main API endpoints provided:
 *   Node.js
 *   Express.js
 *   MongoDB
-*   Mongoose (ODM for MongoDB)
-*   Zod (Validation)
-*   jsonwebtoken (JWT Authentication)
-*   dotenv (Environment variables)
-*   uuid (Generating unique IDs)
+*   Mongoose
+*   Zod
+*   jsonwebtoken
+*   dotenv
+*   uuid
+
+## Deployment
+
+This project is deployed on [Vercel](https://vercel.com/).
